@@ -2,7 +2,6 @@ package appBank.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,14 +39,37 @@ public class PessoaController {
 
 	@PostMapping("/pessoas")
 	public ResponseEntity<Pessoa> createPessoa(@RequestBody Pessoa pessoa) {
-		//System.out.println(pessoa.getCpf() + ", " + pessoa.getNome() + ", " + pessoa.getDataNascimento().toString());
+
 		try {
-			Pessoa _pessoa = pessoaRepository.save(new Pessoa(pessoa.getCpf(), pessoa.getNome(), pessoa.getDataNascimento()));
-			return new ResponseEntity<>(_pessoa, HttpStatus.CREATED);
+
+			Pessoa _pessoa = pessoaRepository.save(new Pessoa(
+					pessoa.getCpf(), pessoa.getNome(), pessoa.getDataNascimento()));
+
+			if (_pessoa.isCPFValid())
+				return new ResponseEntity<>(_pessoa, HttpStatus.CREATED);
+			
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+
 		} catch (Exception e) {
+
 			System.out.println(e.getMessage());
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+
 		}
+
+	}
+	
+	@PostMapping("/pessoas")
+	public ResponseEntity<String> addPerson(@RequestBody Pessoa pessoa) {
+	    // Validate CPF
+	    if (!pessoa.isCPFValid()) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF Inválido");
+	    }
+	    
+	    // Save person to database
+	    pessoaRepository.save(pessoa);
+	    
+	    return ResponseEntity.status(HttpStatus.CREATED).body("Pessoa adicionada com êxito");
 	}
 
 }
