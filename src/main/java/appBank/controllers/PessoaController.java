@@ -36,28 +36,6 @@ public class PessoaController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
-	@PostMapping("/pessoas")
-	public ResponseEntity<Pessoa> createPessoa(@RequestBody Pessoa pessoa) {
-
-		try {
-
-			Pessoa _pessoa = pessoaRepository.save(new Pessoa(
-					pessoa.getCpf(), pessoa.getNome(), pessoa.getDataNascimento()));
-
-			if (_pessoa.isCPFValid())
-				return new ResponseEntity<>(_pessoa, HttpStatus.CREATED);
-			
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-
-		} catch (Exception e) {
-
-			System.out.println(e.getMessage());
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-
-		}
-
-	}
 	
 	@PostMapping("/pessoas")
 	public ResponseEntity<String> addPerson(@RequestBody Pessoa pessoa) {
