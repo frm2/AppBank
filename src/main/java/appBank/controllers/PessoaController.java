@@ -39,7 +39,12 @@ public class PessoaController {
 	
 	@PostMapping("/pessoas")
 	public ResponseEntity<String> addPerson(@RequestBody Pessoa pessoa) {
-	    // Validate CPF
+		
+		if(pessoaRepository.existsBycpf(pessoa.getCpf())) {
+	        return ResponseEntity.badRequest().body("Uma Pessoa com esse CPF já existe");
+	    }
+		
+		// Validate CPF
 	    if (!pessoa.isCPFValid()) {
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF Inválido");
 	    }
