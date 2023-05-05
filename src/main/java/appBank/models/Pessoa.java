@@ -21,7 +21,7 @@ public class Pessoa {
 	@Temporal(TemporalType.DATE)
 	private Date dataNascimento;
 
-	@OneToMany(mappedBy = "cpf_pessoa")
+	@OneToMany(mappedBy = "pessoa")
 	private List<Conta> contas;
 
 	public Pessoa(String cpf, String nome, Date dataNascimento) {

@@ -23,7 +23,7 @@ public class Conta {
 	@Column
 	private boolean bloqueado;
 	
-	@OneToMany(mappedBy = "conta_id")
+	@OneToMany(mappedBy = "conta")
 	private List<Transferencia> transferencias;
 
 	public Conta(int id, Pessoa pessoa, int agencia, boolean bloqueado) {
