@@ -26,9 +26,8 @@ public class Conta {
 	@OneToMany(mappedBy = "conta")
 	private List<Transferencia> transferencias;
 
-	public Conta(int id, Pessoa pessoa, int agencia, boolean bloqueado) {
+	public Conta(Pessoa pessoa, int agencia, boolean bloqueado) {
 		super();
-		this.id = id;
 		this.pessoa = pessoa;
 		this.agencia = agencia;
 		this.bloqueado = bloqueado;
@@ -42,9 +41,9 @@ public class Conta {
 		return id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
+//	public void setId(int id) {
+//		this.id = id;
+//	}
 
 	public Pessoa getPessoa() {
 		return pessoa;

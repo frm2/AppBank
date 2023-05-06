@@ -38,9 +38,9 @@ public class Pessoa {
 	public String getCpf() {
 		return cpf;
 	}
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
+//	public void setCpf(String cpf) {
+//		this.cpf = cpf;
+//	}
 	public String getNome() {
 		return nome;
 	}

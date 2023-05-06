@@ -2,11 +2,13 @@ package appBank.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import appBank.repositories.PessoaRepository;
 import appBank.models.Pessoa;
@@ -19,7 +21,7 @@ public class PessoaController {
 	@Autowired
 	PessoaRepository pessoaRepository;
 
-	@GetMapping("/pessoas")
+	@GetMapping("/")
 	public ResponseEntity<List<Pessoa>> getAllPessoas(@RequestParam(required = false) String cpf) {
 		try {
 			List<Pessoa> pessoas = new ArrayList<Pessoa>();
@@ -36,23 +38,46 @@ public class PessoaController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	@PostMapping("/pessoas")
+
+	@PostMapping("/")
 	public ResponseEntity<String> addPerson(@RequestBody Pessoa pessoa) {
-		
-		if(pessoaRepository.existsBycpf(pessoa.getCpf())) {
-	        return ResponseEntity.badRequest().body("Uma Pessoa com esse CPF já existe");
-	    }
-		
-		// Validate CPF
-	    if (!pessoa.isCPFValid()) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF Inválido");
-	    }
-	    
-	    // Save person to database
-	    pessoaRepository.save(pessoa);
-	    
-	    return ResponseEntity.status(HttpStatus.CREATED).body("Pessoa adicionada com êxito");
+		try {
+			if(pessoaRepository.existsBycpf(pessoa.getCpf())) {
+				return ResponseEntity.badRequest().body("Uma Pessoa com esse CPF já existe");
+			}
+
+			// Validate CPF
+			if (!pessoa.isCPFValid()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF Inválido");
+			}
+
+			// Save person to database
+			pessoaRepository.save(pessoa);
+
+			return ResponseEntity.status(HttpStatus.CREATED).body("Pessoa adicionada com êxito");
+
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Transactional
+	@DeleteMapping("/{cpf}")
+	public ResponseEntity<String> deletePerson(@PathVariable String cpf) {
+		try {
+			Optional<Pessoa> optionalPerson = pessoaRepository.findBycpf(cpf);
+			if (optionalPerson.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND)
+						.body("Não foi encontrado pessoa com CPF: " + cpf);
+			}
+			
+			Pessoa pessoa= optionalPerson.get();
+			pessoaRepository.delete(pessoa);
+			return ResponseEntity.ok("Pessoa com CPF " + cpf + " deletada com êxito");
+			
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }
