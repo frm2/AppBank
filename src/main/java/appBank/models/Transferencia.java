@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import appBank.enums.TransferenciaType;
 
 @Entity
@@ -17,6 +19,7 @@ public class Transferencia {
 	private int id;
 	
 	@ManyToOne
+	@JsonIgnore
 	@JoinColumn(name = "conta_id", nullable=false)
 	private Conta conta;
 	
@@ -34,10 +37,6 @@ public class Transferencia {
 	public int getId() {
 		return id;
 	}
-
-//	public void setId(int id) {
-//		this.id = id;
-//	}
 
 	public Conta getConta() {
 		return conta;
@@ -86,7 +85,8 @@ public class Transferencia {
 	@Override
 	public String toString() {
 		return "Transferencia [id=" + id + ", contaId=" + conta.getId() + 
-				", tipo=" + transferenciaType.getTypeValue() + ", data =" + data.toString() + "]";
+				", tipo=" + transferenciaType.getTypeValue() + ", data =" + data.toString() + 
+				", valor=" + valor + "]";
 	}
 	
 }

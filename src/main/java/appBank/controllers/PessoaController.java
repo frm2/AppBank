@@ -40,18 +40,16 @@ public class PessoaController {
 	}
 
 	@PostMapping("/")
-	public ResponseEntity<String> addPerson(@RequestBody Pessoa pessoa) {
+	public ResponseEntity<String> addPessoa(@RequestBody Pessoa pessoa) {
 		try {
 			if(pessoaRepository.existsBycpf(pessoa.getCpf())) {
 				return ResponseEntity.badRequest().body("Uma Pessoa com esse CPF já existe");
 			}
 
-			// Validate CPF
 			if (!pessoa.isCPFValid()) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF Inválido");
 			}
 
-			// Save person to database
 			pessoaRepository.save(pessoa);
 
 			return ResponseEntity.status(HttpStatus.CREATED).body("Pessoa adicionada com êxito");
@@ -63,7 +61,7 @@ public class PessoaController {
 
 	@Transactional
 	@DeleteMapping("/{cpf}")
-	public ResponseEntity<String> deletePerson(@PathVariable String cpf) {
+	public ResponseEntity<String> deletePessoa(@PathVariable String cpf) {
 		try {
 			Optional<Pessoa> optionalPerson = pessoaRepository.findBycpf(cpf);
 			if (optionalPerson.isEmpty()) {

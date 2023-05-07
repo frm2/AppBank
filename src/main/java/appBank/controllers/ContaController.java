@@ -42,8 +42,8 @@ public class ContaController {
 
 	@PostMapping("/{cpf}")
 	public ResponseEntity<String> createConta(@PathVariable String cpf) {
-		try {
-			Pessoa pessoa = pessoaRepository.findBycpf(cpf).orElse(null);
+			
+		Pessoa pessoa = pessoaRepository.findBycpf(cpf).orElse(null);
 			if (pessoa == null) {
 				return ResponseEntity.notFound().build();
 			}
@@ -51,10 +51,7 @@ public class ContaController {
 			contaRepository.save(conta);
 			//			System.out.println(conta.toString());
 			return ResponseEntity.ok().body("Conta criada com êxito");
-		} catch (Exception e) {
-			System.out.println("deu xabu");
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		
 	}
 
 	@DeleteMapping("/{id}")
@@ -92,7 +89,7 @@ public class ContaController {
 		contaRepository.save(conta);
 		return ResponseEntity.ok().body("Conta bloqueada com êxito");
 	}
-	
+
 	@PutMapping("/unblock/{id}")
 	public ResponseEntity<String> desbloquearConta(@PathVariable Long id) {
 
