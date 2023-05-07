@@ -1,10 +1,13 @@
 package appBank.controllers;
 
 import java.math.BigDecimal;
+import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -106,9 +109,8 @@ public class TransferenciaController {
 				"Valor de " + transferenciaDTO.getValor() + " sacado com sucesso");
 	}
 	
-	//TODO: está dando erro e eu não entendo porquê
 	@GetMapping("/saldo/{idConta}")
-	public ResponseEntity<Transferencia> getSaldo(@PathVariable long idConta) {
+	public ResponseEntity<List<Transferencia>> getSaldo(@PathVariable long idConta) {
 		Optional<Conta> optionalConta = contaRepository.findById(idConta);
 		
 		if (optionalConta.isEmpty()) {
@@ -117,18 +119,49 @@ public class TransferenciaController {
 		}
 		
 		Conta conta = optionalConta.get();
-		
 		List<Transferencia> transferencias = transferenciaRepository.findByConta(conta);
-		
 		BigDecimal saldo = getSaldo(transferencias);
+		System.out.println("Saldo de " + saldo);
 		
-		System.out.println("saldo de " + saldo);
+		return ResponseEntity.ok().body(transferencias);
+	}
+	
+	@GetMapping("/saldo/{idConta}/{ano}/{mes}")
+	public ResponseEntity<List<Transferencia>> getSaldo(
+			@PathVariable long idConta, 
+			@PathVariable int mes, 
+			@PathVariable int ano) {
+		Optional<Conta> optionalConta = contaRepository.findById(idConta);
+
+		if (optionalConta.isEmpty()) {
+			// Retorna um NotFound caso a Conta não exista
+			return ResponseEntity.notFound().build();
+		}
 		
-//		for (Transferencia transferencia : transferencias) {
-//			System.out.println(transferencias.toString());
-//		}
+		Conta conta = optionalConta.get();
+		List<Transferencia> transferencias = transferenciaRepository.findByConta(conta);
+		System.out.println("Transferências pré-filtro");
+		for (Transferencia transferencia : transferencias) {
+			System.out.println(transferencia.toString());
+		}
+		Calendar cal = Calendar.getInstance();
+		transferencias = transferencias.stream().filter(t ->{
+			Date data = t.getData();
+			cal.setTime(data);
+			int anoAux = cal.get(Calendar.YEAR);
+			int mesAux = cal.get(Calendar.MONTH) + 1;
+			System.out.println("mesTran: " + mesAux + ", mes: " + mes + ", anoTran: " + anoAux + ", ano: " + ano);
+			return mesAux == mes && ano == anoAux;
+		}).collect(Collectors.toList());
 		
-		return ResponseEntity.ok().body(transferencias.get(0));
+		System.out.println("Transferências pós-filtro");
+		for (Transferencia transferencia : transferencias) {
+			System.out.println(transferencia.toString());
+		}
+		BigDecimal saldo = getSaldo(transferencias);
+		System.out.println("Saldo de " + saldo);
+		
+		return ResponseEntity.ok().body(transferencias);
 	}
 	
 	
