@@ -65,6 +65,7 @@ public class Pessoa {
 
 		String cpf_aux = cpf;
 		String cpfRegex = "\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}";
+		String numeroRepetido = "^(\\d)\\1{10}$";
 
 		if (!cpf_aux.matches(cpfRegex))
 			return false;
@@ -73,6 +74,10 @@ public class Pessoa {
 		if (cpf_aux.length() != 11) {
 			return false; // CPF must have 11 digits
 		}
+
+		if (cpf_aux.matches(numeroRepetido))
+			return(false);
+
 		int[] digits = new int[11];
 		for (int i = 0; i < 11; i++) {
 			digits[i] = Integer.parseInt(cpf_aux.substring(i, i + 1));

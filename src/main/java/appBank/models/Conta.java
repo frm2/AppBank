@@ -11,7 +11,7 @@ public class Conta {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column
-	private int id;
+	private long id;
 
 	@ManyToOne
 	@JoinColumn(name = "cpf_pessoa")
@@ -37,7 +37,7 @@ public class Conta {
 
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 

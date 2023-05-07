@@ -44,7 +44,7 @@ public class PessoaController {
 	public ResponseEntity<String> addPessoa(@RequestBody Pessoa pessoa) {
 		try {
 			if(pessoaRepository.existsBycpf(pessoa.getCpf())) {
-				return ResponseEntity.badRequest().body(
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
 						"Uma Pessoa com esse CPF já existe");
 			}
 
@@ -74,7 +74,7 @@ public class PessoaController {
 			
 			Pessoa pessoa= optionalPerson.get();
 			pessoaRepository.delete(pessoa);
-			return ResponseEntity.ok("Pessoa com CPF " + cpf + " deletada com êxito");
+			return ResponseEntity.status(HttpStatus.OK).body("Pessoa com CPF " + cpf + " deletada com êxito");
 			
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

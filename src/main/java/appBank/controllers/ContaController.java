@@ -43,12 +43,11 @@ public class ContaController {
 		try {	
 			Pessoa pessoa = pessoaRepository.findBycpf(cpf).orElse(null);
 			if (pessoa == null) {
-				return ResponseEntity.notFound().build();
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 			}
 			Conta conta = new Conta(pessoa, getAgencia(), false);
 			contaRepository.save(conta);
-			//			System.out.println(conta.toString());
-			return ResponseEntity.ok().body("Conta criada com êxito");
+			return ResponseEntity.status(HttpStatus.OK).body("Conta criada com êxito");
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -61,7 +60,7 @@ public class ContaController {
 			Optional<Conta> optionalConta = contaRepository.findById(id);
 			if (optionalConta.isEmpty()) {
 				// Retorna um NotFound caso a Conta não exista
-				return ResponseEntity.notFound().build();
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 			}
 
 			Conta conta = optionalConta.get();
@@ -70,7 +69,7 @@ public class ContaController {
 			pessoa.getContas().remove(conta);
 			pessoaRepository.save(pessoa);
 			contaRepository.delete(conta);
-			return ResponseEntity.ok().body("Conta deletada com êxito");
+			return ResponseEntity.status(HttpStatus.OK).body("Conta deletada com êxito");
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -82,7 +81,7 @@ public class ContaController {
 			Optional<Conta> optionalConta = contaRepository.findById(id);
 			if (optionalConta.isEmpty()) {
 				// Retorna um NotFound caso a Conta não exista
-				return ResponseEntity.notFound().build();
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 			}
 
 			Conta conta = optionalConta.get();
@@ -93,7 +92,7 @@ public class ContaController {
 
 			conta.setBloqueado(true);
 			contaRepository.save(conta);
-			return ResponseEntity.ok().body("Conta bloqueada com êxito");
+			return ResponseEntity.status(HttpStatus.OK).body("Conta bloqueada com êxito");
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -105,7 +104,7 @@ public class ContaController {
 			Optional<Conta> optionalConta = contaRepository.findById(id);
 			if (optionalConta.isEmpty()) {
 				// Retorna um NotFound caso a Conta não exista
-				return ResponseEntity.notFound().build();
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 			}
 
 			Conta conta = optionalConta.get();
@@ -116,7 +115,7 @@ public class ContaController {
 			
 			conta.setBloqueado(false);
 			contaRepository.save(conta);
-			return ResponseEntity.ok().body("Conta desbloqueada com êxito");
+			return ResponseEntity.status(HttpStatus.OK).body("Conta desbloqueada com êxito");
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
