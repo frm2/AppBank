@@ -32,9 +32,11 @@ public class TransferenciaController {
 	private ContaRepository contaRepository;
 
 	@PutMapping("/dep")
-	public ResponseEntity<String> depositar(@RequestBody TransferenciaDTO transferenciaDTO){
+	public ResponseEntity<String> depositar(
+			@RequestBody TransferenciaDTO transferenciaDTO){
 		try {
-			Optional<Conta> optionalConta = contaRepository.findById(transferenciaDTO.getIdConta());
+			Optional<Conta> optionalConta = contaRepository.findById(
+					transferenciaDTO.getIdConta());
 
 			if (optionalConta.isEmpty()) {
 				// Retorna um NotFound caso a Conta não exista
@@ -55,7 +57,8 @@ public class TransferenciaController {
 			transferenciaRepository.save(transferencia);
 
 			return ResponseEntity.ok().body(
-					"Valor de " + transferenciaDTO.getValor() + " depositado com sucesso");
+					"Valor de " + transferenciaDTO.getValor() 
+					+ " depositado com sucesso");
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -75,7 +78,8 @@ public class TransferenciaController {
 	@PutMapping("/saq")
 	public ResponseEntity<String> sacar(@RequestBody TransferenciaDTO transferenciaDTO){
 		try {
-			Optional<Conta> optionalConta = contaRepository.findById(transferenciaDTO.getIdConta());
+			Optional<Conta> optionalConta = contaRepository.findById(
+					transferenciaDTO.getIdConta());
 
 			if (optionalConta.isEmpty()) {
 				// Retorna um NotFound caso a Conta não exista
@@ -84,11 +88,13 @@ public class TransferenciaController {
 
 			Conta conta = optionalConta.get();
 
-			List<Transferencia> transferencias = transferenciaRepository.findByConta(conta);
+			List<Transferencia> transferencias = 
+					transferenciaRepository.findByConta(conta);
 
 			BigDecimal saldo = getSaldo(transferencias);
 			if (saldo.compareTo(transferenciaDTO.getValor())<0) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Você não tem fundos o suficiente");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+						"Você não tem fundos o suficiente");
 			}
 
 			Date currentDate = new Date();
@@ -120,7 +126,10 @@ public class TransferenciaController {
 			}
 
 			Conta conta = optionalConta.get();
-			List<Transferencia> transferencias = transferenciaRepository.findByConta(conta);
+			
+			List<Transferencia> transferencias = 
+					transferenciaRepository.findByConta(conta);
+			
 			BigDecimal saldo = getSaldo(transferencias);
 			System.out.println("Saldo de " + saldo);
 
@@ -144,18 +153,24 @@ public class TransferenciaController {
 			}
 
 			Conta conta = optionalConta.get();
-			List<Transferencia> transferencias = transferenciaRepository.findByConta(conta);
+			
+			List<Transferencia> transferencias = 
+					transferenciaRepository.findByConta(conta);
+			
 			System.out.println("Transferências pré-filtro");
-			for (Transferencia transferencia : transferencias) {
+			
+			for (Transferencia transferencia : transferencias)
 				System.out.println(transferencia.toString());
-			}
+
 			Calendar cal = Calendar.getInstance();
 			transferencias = transferencias.stream().filter(t ->{
 				Date data = t.getData();
 				cal.setTime(data);
 				int anoAux = cal.get(Calendar.YEAR);
 				int mesAux = cal.get(Calendar.MONTH) + 1;
-				System.out.println("mesAux: " + mesAux + ", mes: " + mes + ", anoAux: " + anoAux + ", ano: " + ano);
+				System.out.println(
+						"mesAux: " + mesAux + ", mes: " + mes + 
+						", anoAux: " + anoAux + ", ano: " + ano);
 				return mesAux == mes && ano == anoAux;
 			}).collect(Collectors.toList());
 

@@ -1,6 +1,5 @@
 package appBank.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.transaction.annotation.Transactional;
 
 import appBank.repositories.ContaRepository;
 import appBank.repositories.PessoaRepository;
@@ -90,7 +88,8 @@ public class ContaController {
 			Conta conta = optionalConta.get();
 
 			if(conta.isBloqueado()) 
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Conta já está bloqueada");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+						"Conta já está bloqueada");
 
 			conta.setBloqueado(true);
 			contaRepository.save(conta);
@@ -112,8 +111,9 @@ public class ContaController {
 			Conta conta = optionalConta.get();
 
 			if(!conta.isBloqueado()) 
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Conta já está desbloqueada");
-
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+						"Conta já está desbloqueada");
+			
 			conta.setBloqueado(false);
 			contaRepository.save(conta);
 			return ResponseEntity.ok().body("Conta desbloqueada com êxito");

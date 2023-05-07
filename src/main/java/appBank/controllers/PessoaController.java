@@ -22,7 +22,8 @@ public class PessoaController {
 	PessoaRepository pessoaRepository;
 
 	@GetMapping("/")
-	public ResponseEntity<List<Pessoa>> getAllPessoas(@RequestParam(required = false) String cpf) {
+	public ResponseEntity<List<Pessoa>> getAllPessoas(
+			@RequestParam(required = false) String cpf) {
 		try {
 			List<Pessoa> pessoas = new ArrayList<Pessoa>();
 
@@ -43,7 +44,8 @@ public class PessoaController {
 	public ResponseEntity<String> addPessoa(@RequestBody Pessoa pessoa) {
 		try {
 			if(pessoaRepository.existsBycpf(pessoa.getCpf())) {
-				return ResponseEntity.badRequest().body("Uma Pessoa com esse CPF já existe");
+				return ResponseEntity.badRequest().body(
+						"Uma Pessoa com esse CPF já existe");
 			}
 
 			if (!pessoa.isCPFValid()) {
@@ -52,7 +54,8 @@ public class PessoaController {
 
 			pessoaRepository.save(pessoa);
 
-			return ResponseEntity.status(HttpStatus.CREATED).body("Pessoa adicionada com êxito");
+			return ResponseEntity.status(HttpStatus.CREATED).body(
+					"Pessoa adicionada com êxito");
 
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

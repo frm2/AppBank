@@ -3,7 +3,6 @@ package appBank.models;
 
 import jakarta.persistence.*;
 import java.sql.Date;
-import java.util.InputMismatchException;
 import java.util.List;
 
 @Entity
@@ -111,7 +110,8 @@ public class Pessoa {
 
 	@Override
 	public String toString() {
-		return "Pessoa [cpf=" + cpf + ", nome=" + nome + ", dataNascimento=" + dataNascimento  + "]";
+		return "Pessoa [cpf=" + cpf + ", nome=" + nome 
+				+ ", dataNascimento=" + dataNascimento  + "]";
 	}
 
 }

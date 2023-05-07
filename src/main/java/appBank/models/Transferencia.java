@@ -74,7 +74,9 @@ public class Transferencia {
 		
 	}
 	
-	public Transferencia(Conta conta, TransferenciaType transferenciaType, BigDecimal valor, Date data) {
+	public Transferencia(
+			Conta conta, TransferenciaType transferenciaType, 
+			BigDecimal valor, Date data) {
 		super();
 		this.conta = conta;
 		this.transferenciaType = transferenciaType;
@@ -85,8 +87,8 @@ public class Transferencia {
 	@Override
 	public String toString() {
 		return "Transferencia [id=" + id + ", contaId=" + conta.getId() + 
-				", tipo=" + transferenciaType.getTypeValue() + ", data =" + data.toString() + 
-				", valor=" + valor + "]";
+				", tipo=" + transferenciaType.getTypeValue() + ", data =" + 
+				data.toString() + ", valor=" + valor + "]";
 	}
 	
 }
