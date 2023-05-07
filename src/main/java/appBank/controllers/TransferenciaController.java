@@ -31,7 +31,7 @@ public class TransferenciaController {
 	@Autowired
 	private ContaRepository contaRepository;
 
-	@PutMapping("/dep")
+	@PostMapping("/dep")
 	public ResponseEntity<String> depositar(
 			@RequestBody TransferenciaDTO transferenciaDTO){
 		try {
@@ -75,7 +75,7 @@ public class TransferenciaController {
 		return saldo;
 	}
 
-	@PutMapping("/saq")
+	@PostMapping("/saq")
 	public ResponseEntity<String> sacar(@RequestBody TransferenciaDTO transferenciaDTO){
 		try {
 			Optional<Conta> optionalConta = contaRepository.findById(
