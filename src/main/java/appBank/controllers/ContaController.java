@@ -42,8 +42,8 @@ public class ContaController {
 
 	@PostMapping("/{cpf}")
 	public ResponseEntity<String> createConta(@PathVariable String cpf) {
-			
-		Pessoa pessoa = pessoaRepository.findBycpf(cpf).orElse(null);
+		try {	
+			Pessoa pessoa = pessoaRepository.findBycpf(cpf).orElse(null);
 			if (pessoa == null) {
 				return ResponseEntity.notFound().build();
 			}
@@ -51,62 +51,75 @@ public class ContaController {
 			contaRepository.save(conta);
 			//			System.out.println(conta.toString());
 			return ResponseEntity.ok().body("Conta criada com êxito");
-		
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteConta(@PathVariable Long id) {
-		Optional<Conta> optionalConta = contaRepository.findById(id);
-		if (optionalConta.isEmpty()) {
-			// Retorna um NotFound caso a Conta não exista
-			return ResponseEntity.notFound().build();
-		}
+		try {
+			Optional<Conta> optionalConta = contaRepository.findById(id);
+			if (optionalConta.isEmpty()) {
+				// Retorna um NotFound caso a Conta não exista
+				return ResponseEntity.notFound().build();
+			}
 
-		Conta conta = optionalConta.get();
-		// Remove a Conta da lista de Contas da Pessoa
-		Pessoa pessoa = conta.getPessoa();
-		pessoa.getContas().remove(conta);
-		pessoaRepository.save(pessoa);
-		contaRepository.delete(conta);
-		return ResponseEntity.ok().body("Conta deletada com êxito");
+			Conta conta = optionalConta.get();
+			// Remove a Conta da lista de Contas da Pessoa
+			Pessoa pessoa = conta.getPessoa();
+			pessoa.getContas().remove(conta);
+			pessoaRepository.save(pessoa);
+			contaRepository.delete(conta);
+			return ResponseEntity.ok().body("Conta deletada com êxito");
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@PutMapping("/block/{id}")
 	public ResponseEntity<String> bloquearConta(@PathVariable Long id) {
+		try {
+			Optional<Conta> optionalConta = contaRepository.findById(id);
+			if (optionalConta.isEmpty()) {
+				// Retorna um NotFound caso a Conta não exista
+				return ResponseEntity.notFound().build();
+			}
 
-		Optional<Conta> optionalConta = contaRepository.findById(id);
-		if (optionalConta.isEmpty()) {
-			// Retorna um NotFound caso a Conta não exista
-			return ResponseEntity.notFound().build();
+			Conta conta = optionalConta.get();
+
+			if(conta.isBloqueado()) 
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Conta já está bloqueada");
+
+			conta.setBloqueado(true);
+			contaRepository.save(conta);
+			return ResponseEntity.ok().body("Conta bloqueada com êxito");
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		Conta conta = optionalConta.get();
-
-		if(conta.isBloqueado()) 
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Conta já está bloqueada");
-
-		conta.setBloqueado(true);
-		contaRepository.save(conta);
-		return ResponseEntity.ok().body("Conta bloqueada com êxito");
 	}
 
 	@PutMapping("/unblock/{id}")
 	public ResponseEntity<String> desbloquearConta(@PathVariable Long id) {
+		try {
+			Optional<Conta> optionalConta = contaRepository.findById(id);
+			if (optionalConta.isEmpty()) {
+				// Retorna um NotFound caso a Conta não exista
+				return ResponseEntity.notFound().build();
+			}
 
-		Optional<Conta> optionalConta = contaRepository.findById(id);
-		if (optionalConta.isEmpty()) {
-			// Retorna um NotFound caso a Conta não exista
-			return ResponseEntity.notFound().build();
+			Conta conta = optionalConta.get();
+
+			if(!conta.isBloqueado()) 
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Conta já está desbloqueada");
+
+			conta.setBloqueado(false);
+			contaRepository.save(conta);
+			return ResponseEntity.ok().body("Conta desbloqueada com êxito");
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		Conta conta = optionalConta.get();
-
-		if(!conta.isBloqueado()) 
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Conta já está desbloqueada");
-
-		conta.setBloqueado(false);
-		contaRepository.save(conta);
-		return ResponseEntity.ok().body("Conta desbloqueada com êxito");
 	}
 
 
