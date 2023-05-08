@@ -40,10 +40,15 @@ public class TransferenciaController {
 
 			if (optionalConta.isEmpty()) {
 				// Retorna um NotFound caso a Conta não exista
-				return ResponseEntity.notFound().build();
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 			}
 
 			Conta conta = optionalConta.get();
+			
+			if (conta.isBloqueado()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+						"Sua conta está bloqueada");
+			}
 
 			Date currentDate = new Date();
 			java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
@@ -56,7 +61,7 @@ public class TransferenciaController {
 
 			transferenciaRepository.save(transferencia);
 
-			return ResponseEntity.ok().body(
+			return ResponseEntity.status(HttpStatus.OK).body(
 					"Valor de " + transferenciaDTO.getValor() 
 					+ " depositado com sucesso");
 		} catch (Exception e) {
@@ -92,6 +97,10 @@ public class TransferenciaController {
 					transferenciaRepository.findByConta(conta);
 
 			BigDecimal saldo = getSaldo(transferencias);
+			if (conta.isBloqueado()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+						"Sua conta está bloqueada");
+			}
 			if (saldo.compareTo(transferenciaDTO.getValor())<0) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
 						"Você não tem fundos o suficiente");
@@ -108,7 +117,7 @@ public class TransferenciaController {
 
 			transferenciaRepository.save(transferencia);
 
-			return ResponseEntity.ok().body(
+			return ResponseEntity.status(HttpStatus.OK).body(
 					"Valor de " + transferenciaDTO.getValor() + " sacado com sucesso");
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -122,7 +131,7 @@ public class TransferenciaController {
 
 			if (optionalConta.isEmpty()) {
 				// Retorna um NotFound caso a Conta não exista
-				return ResponseEntity.notFound().build();
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 			}
 
 			Conta conta = optionalConta.get();
@@ -133,7 +142,7 @@ public class TransferenciaController {
 			BigDecimal saldo = getSaldo(transferencias);
 			System.out.println("Saldo de " + saldo);
 
-			return ResponseEntity.ok().body(transferencias);
+			return ResponseEntity.status(HttpStatus.OK).body(transferencias);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -181,7 +190,7 @@ public class TransferenciaController {
 			BigDecimal saldo = getSaldo(transferencias);
 			System.out.println("Saldo de " + saldo);
 
-			return ResponseEntity.ok().body(transferencias);
+			return ResponseEntity.status(HttpStatus.OK).body(transferencias);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
