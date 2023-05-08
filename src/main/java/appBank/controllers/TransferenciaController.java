@@ -158,7 +158,7 @@ public class TransferenciaController {
 
 			if (optionalConta.isEmpty()) {
 				// Retorna um NotFound caso a Conta não exista
-				return ResponseEntity.notFound().build();
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 			}
 
 			Conta conta = optionalConta.get();
